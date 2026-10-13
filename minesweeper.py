@@ -193,10 +193,18 @@ class MinesweeperAI():
 
         #1) mark the cell as a move that has been made
         self.moves_made.add(cell)
-        #2) mark the cell as safe
+        #2) mark the cell as safe [ALREADY Developed and tested deeply]
         self.mark_safe(cell)
-            #ALREADY Developed and tested deeply
-        #3) 
+            #I NEED TO UPDATE any sentences that contain the cell as well
+
+            #Make inferences and one more time update the knowledgebase
+        #3) add a new sentence to the AI’s knowledge base to indicate that count of the cell’s neighbors are mines. 
+            #Be sure to only include cells whose state is still undetermined in the sentence.
+                #How am I going to know which cells are around the current cell and how am I going to know
+                    #which of those are undertermined**NOW 
+        
+        
+        self.knowledge.append(Sentence(cell,count))
 
     def make_safe_move(self):
         """
@@ -217,3 +225,55 @@ class MinesweeperAI():
             2) are not known to be mines
         """
         raise NotImplementedError
+
+    def surrounding_cells(self,cell):
+        """
+        Returns the surrounding cells of the cell already clicked
+        """
+        around_cells=set()
+        i,j = cell
+
+        row_before = False
+        row_after = False
+        col_left = False
+        col_right = False
+        
+        if i-1 >= 0:
+            row_before= True
+        if i+1 <= self.height-1:
+            row_after = True
+        if j-1 >= 0:
+            col_left = True
+        if j+1 <= self.width-1:
+            col_right = True
+    
+        #ANALYZING ROWS
+        if row_before: #IS THERE A ROW BEFORE?
+            #UP CELL
+            around_cells.add((i-1,j))
+            if col_left: #IS THERE A LEFT COLUMN?
+                #LEFT UP SQUARE
+                around_cells.add((i-1,j-1))
+            if col_right: #IS THERE A RIGHT COLUMN?
+                #RIGHT UP SQUARE
+                around_cells.add((i-1,j+1))
+    
+        if row_after: #IS THERE A ROW AFTER?
+            #DOWN CELL
+            around_cells.add((i+1,j))
+            if col_left: #IS THERE A LEFT COLUMN?
+                #LEFT DOWN SQUARE
+                around_cells.add((i+1,j-1))
+            if col_right: #IS THERE A RIGHT COLUMN?
+                #RIGHT DOWN SQUARE
+                around_cells.add((i+1,j+1))
+    
+        #ANALYZING COLUMNS
+        if col_left:
+            around_cells.add((i,j-1))
+        if col_right:
+            around_cells.add((i,j+1))
+
+        return around_cells
+    
+    
