@@ -126,13 +126,15 @@ class Sentence():
         self.cells.remove(cell)
         #Sustracts one to the count
         self.count -= 1
-        #Add to 
+        self.mines.add(cell)
 
     def mark_safe(self, cell):
         """
         Updates internal knowledge representation given the fact that
         a cell is known to be safe.
         """
+        #Delete the mine cell
+        self.cells.remove(cell)
         self.safes.add(cell)
 
 
@@ -181,7 +183,7 @@ class MinesweeperAI():
         safe cell, how many neighboring cells have mines in them.
 
         This function should:
-            1) mark the cell as a move that has been made 
+            1) mark the cell as a move that has been made
             2) mark the cell as safe
             3) add a new sentence to the AI's knowledge base
                based on the value of `cell` and `count`
@@ -193,18 +195,17 @@ class MinesweeperAI():
 
         #1) mark the cell as a move that has been made
         self.moves_made.add(cell)
-        #2) mark the cell as safe [ALREADY Developed and tested deeply]
+        #2) mark the cell as safe and updates any sentences that 
+        # contain the cell as well. [ALREADY Developed and tested deeply]
         self.mark_safe(cell)
             #I NEED TO UPDATE any sentences that contain the cell as well
-
             #Make inferences and one more time update the knowledgebase
         #3) add a new sentence to the AI’s knowledge base to indicate that count of the cell’s neighbors are mines. 
             #Be sure to only include cells whose state is still undetermined in the sentence.
-                #How am I going to know which cells are around the current cell and how am I going to know
-                    #which of those are undertermined**NOW 
-        
-        
-        self.knowledge.append(Sentence(cell,count))
+        surr_cells=self.surrounding_cells(cell)
+        self.knowledge.append(Sentence(surr_cells,count))
+        #4) mark any additional cells as safe or as mines if it can be concluded
+            #    based on the AI's knowledge base
 
     def make_safe_move(self):
         """

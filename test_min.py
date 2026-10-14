@@ -39,6 +39,16 @@ def test_surrounding_cells_center():
             (i-1,j),(i-1,j+1),(i-1,j-1),
             (i+1,j),(i+1,j+1),(i+1,j-1)
             }==response
+#HARDCODED (8*8) TEST, THEREFORE NO SCALABLE
+def test_surrounding_cells_one_side():
+    i=0
+    j=1
+    #UP SIDE
+    response=ai.surrounding_cells((i,j))
+    assert {(0,2),(0,0),(1,0),(1,1),(1,2)}==response
 
-#def test_surrounding_cells_one_side():
-
+    i=4
+    j=7
+    #DOWN SIDE
+    response=ai.surrounding_cells((i,j))
+    assert {(3,7),(3,6),(4,6),(5,6),(5,7)}==response
