@@ -36,21 +36,33 @@ before_kb_len=LEN(KB)
 {A,B}=1
 *created and partial canceled {G,A,B,C,I}=1 by iterating in safe cells looking for safe coincidence with the current sentence by point 3!!!
 {A,B,C,I}=1
-after_kb_len=LEN(KB)
+KB_change=True
 
-WHILE before_kb_len =! after_kb_len:
-before_kb_len=len(KB)
+WHILE KB_change=True:
+KB_change=False
 *partial canceled {A,B,C,I}=1 by ->
-if one sentence "{A,B}=1" is inside another sentence "{A,B,C,I}=1"  and has the same count: #SO WE NEED TO ITERATE EACH SENTENCE ON ALL THE KNOWLEDGE
-    the part that it is not in common, is safe <- point 4!!!
-elif the one sentence.CELLS is shorter than iterator case.CELLS:
-    if one sentence.count shorter OR equal to iterator case.count:
-        modifies the iterator case cells substracting one sentence cells from it
-        modifies the iterator case count substracting one sentence.count from it
-elif SENTENCE.COUNT=LEN(SENTENCE.CELLS)
-        VERIFY WHICH CELL OF SENTENCE DOESN'T HAS A STATUS AND
-        MARK AS MINE 
-after_kb_len=len(KB)
+
+    for sentence in self.knowledge[:]:
+        if sentence.count == len(sentence.cells) and sentence.count>0:
+            for cell in sentence.cells.copy():#MARK AS MINE EACH ONE
+                self.mark_mine(cell)
+            self.knowledge.remove(sentence) #DELETE THE ENTIRE OBJECT
+            KB_change=True
+            break
+        elif sentence.count == len(sentence.cells) and sentence.count==0:
+            MARK AS SAFE AND DELETE THE ENTIRE OBJECT 
+            changes=TRUE       
+        elif one sentence "{A,B}=1" is inside another sentence "{A,B,C,I}=1"  and has the same or less count: #SO WE NEED TO ITERATE EACH SENTENCE ON ALL THE KNOWLEDGE
+            the part that it is not in common is mark_safe
+            DELETE THE ENTIRE OBJECT OF "ANOTHER sentence"<- point 4!!!
+            changes=TRUE
+    changes=FALSE
+    #elif the one sentence.CELLS is shorter than iterator case.CELLS:
+        if one sentence.count shorter OR equal to iterator case.count:
+            modifies the iterator case cells substracting one sentence cells from it
+            modifies the iterator case count substracting one sentence.count from it
+
+
 
 
 
