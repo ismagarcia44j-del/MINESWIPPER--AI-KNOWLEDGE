@@ -43,7 +43,7 @@ KB_change = False
 *partial canceled {A,B,C,I}=1 by ->
     for sentence in self.knowledge[:]:
         if sentence:
-            clean_tracked_safes_mines(self,sentence.cells)
+            clean_tracked_safes_mines(self,sentence.cells,sentence)
             break
         elif sentence.count == len(sentence.cells) and sentence.count>0:
             for cell in sentence.cells.copy():#MARK AS MINE EACH ONE
@@ -56,16 +56,27 @@ KB_change = False
                 self.mark_safe(cell)
             self.knowledge.remove(sentence) #DELETE THE ENTIRE OBJECT
             KB_change=True
-            break      
-        elif one sentence "{A,B}=1" is inside another sentence "{A,B,C,I}=1"  and has the same or less count: #SO WE NEED TO ITERATE EACH SENTENCE ON ALL THE KNOWLEDGE
-            the part that it is not in common is mark_safe ****HEREEE!!!!
-            DELETE THE ENTIRE OBJECT OF "ANOTHER sentence"<- point 4!!!
-            changes=TRUE ****HEREEE!!!!
+            break
 
-    #elif the one sentence.CELLS is shorter than iterator case.CELLS:
-        if one sentence.count shorter OR equal to iterator case.count:
-            modifies the iterator case cells substracting one sentence cells from it
-            modifies the iterator case count substracting one sentence.count from it
+        for other in self.knowledge[:]: #LOOKING FOR SUBSETS 
+            if sentence.issubset(other):
+                if not other is sentence:
+                    cells_change = other.cells-sentence.cells
+                    count_change = other.count-sentence.count
+                    other.cells = cells_change
+                    other.count = count_change
+                    KB_change=True
+                    break
+        break 
+                #ONCE MODIFIED ONE SENTENCE OF THE ORIGINAL
+                #WE NEED TO START ONE MORE TIME THE FORMER ITERATION
+                #FROM SCRATCH
+    
+
+
+                        
+
+
 
 
 
