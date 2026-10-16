@@ -229,7 +229,8 @@ class MinesweeperAI():
 
     def surrounding_cells(self,cell):
         """
-        Returns the surrounding cells of the cell already clicked
+        Returns the surrounding cells (set of tuples) of 
+        the cell already clicked
         """
         around_cells=set()
         i,j = cell

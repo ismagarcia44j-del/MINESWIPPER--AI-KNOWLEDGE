@@ -1,12 +1,6 @@
-l=[69,70,71,72]
-"""
-print(id(l), id(l[:])) 
-l[:]
-print(id(l[:]))"""
+a = {4}
+b = {1, 2, 3}
+if intersection:=a.intersection(b):
+    print(1)
 
-for num in l:
-    print(num)
-    if num==71:
-        del l[num]
-    print(num)
-print (l)
+print(intersection)

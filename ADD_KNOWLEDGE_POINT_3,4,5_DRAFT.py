@@ -38,29 +38,35 @@ before_kb_len=LEN(KB)
 {A,B,C,I}=1
 KB_change=True
 
-WHILE KB_change=True:
-KB_change=False
+while KB_change==True:
+KB_change = False
 *partial canceled {A,B,C,I}=1 by ->
-
     for sentence in self.knowledge[:]:
-        if sentence.count == len(sentence.cells) and sentence.count>0:
+        if sentence:
+            clean_tracked_safes_mines(self,sentence.cells)
+            break
+        elif sentence.count == len(sentence.cells) and sentence.count>0:
             for cell in sentence.cells.copy():#MARK AS MINE EACH ONE
                 self.mark_mine(cell)
             self.knowledge.remove(sentence) #DELETE THE ENTIRE OBJECT
             KB_change=True
             break
         elif sentence.count == len(sentence.cells) and sentence.count==0:
-            MARK AS SAFE AND DELETE THE ENTIRE OBJECT 
-            changes=TRUE       
+            for cell in sentence.cells.copy():#MARK AS SAFE EACH ONE
+                self.mark_safe(cell)
+            self.knowledge.remove(sentence) #DELETE THE ENTIRE OBJECT
+            KB_change=True
+            break      
         elif one sentence "{A,B}=1" is inside another sentence "{A,B,C,I}=1"  and has the same or less count: #SO WE NEED TO ITERATE EACH SENTENCE ON ALL THE KNOWLEDGE
-            the part that it is not in common is mark_safe
+            the part that it is not in common is mark_safe ****HEREEE!!!!
             DELETE THE ENTIRE OBJECT OF "ANOTHER sentence"<- point 4!!!
-            changes=TRUE
-    changes=FALSE
+            changes=TRUE ****HEREEE!!!!
+
     #elif the one sentence.CELLS is shorter than iterator case.CELLS:
         if one sentence.count shorter OR equal to iterator case.count:
             modifies the iterator case cells substracting one sentence cells from it
             modifies the iterator case count substracting one sentence.count from it
+
 
 
 

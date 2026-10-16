@@ -1,11 +1,29 @@
 FUNCTIONS OF POINT 3,4,5
 
 POINT 3: 
-#def clean_safes_and_mines(self,a_cells_group):
+
+surr_cells = self.surrounding_cells(cell)
+self.knowledge.append(Sentence(surr_cells,count))
+
+
+
+
+POINT and 4:
+def clean_tracked_safes_mines(self,a_cells_group): #Well done
     """
     Find safe and mine cells in the surr_cells
     Return just undefined cells in a set of tuples
     """
+    #Clean safes
+    if safe_intersection := a_cells_group.intersection(self.safes):
+        for cell in safe_intersection:
+            self.mark_safes(cell)
+
+    #Clean mines
+    if mine_intersection:=a_cells_group.intersection(self.mines):
+        for cell in mine_intersection:
+            self.mark_mines(cell)
+
 
 #def mines_sentence(self,a_cells_group):
     """
@@ -13,15 +31,7 @@ POINT 3:
     Return True or False
     """
 
-surr_cells = self.surrounding_cells(cell)
 
-#if mines_sentence(surr_cells):
-    #delete_every_sentence
 
-#clean_cells=clean_safes_and_mines(surr_cells)
-
-self.knowledge.append(Sentence(surr_cells,count))
-
-POINT 4: 
 
 
