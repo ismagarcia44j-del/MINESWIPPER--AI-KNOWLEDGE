@@ -52,3 +52,21 @@ def test_surrounding_cells_one_side():
     #DOWN SIDE
     response=ai.surrounding_cells((i,j))
     assert {(3,7),(3,6),(4,6),(5,6),(5,7)}==response
+
+def test_clean_tracked_safes_mines():
+    #testing clean safes
+    ai.knowledge = [Sentence({(1,0),(1,1),(0,1)},1)]#,Sentence({(0,1),(1,1),(1,2)},1)]
+    ai.safes = {(1,1)}
+    ai.clean_tracked_safes_mines(ai.knowledge[0].cells,ai.knowledge[0])
+    assert ai.knowledge[0].cells=={(1,0),(0,1)}
+
+    #testing clean mines
+    ai.knowledge = [Sentence({(1,0),(1,1),(0,1)},1)]#,Sentence({(0,1),(1,1),(1,2)},1)]
+    ai.mines = {(1,1)}
+    ai.clean_tracked_safes_mines(ai.knowledge[0].cells,ai.knowledge[0])
+    assert ai.knowledge[0].cells=={(1,0),(0,1)}
+
+    #testing erase the object
+    ai.knowledge = [Sentence({},0)]#,Sentence({(0,1),(1,1),(1,2)},1)]
+    ai.clean_tracked_safes_mines(ai.knowledge[0].cells,ai.knowledge[0])
+    assert not ai.knowledge[0].cells == True

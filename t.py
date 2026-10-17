@@ -1,6 +1,4 @@
-a = {4}
-b = {1, 2, 3}
-if intersection:=a.intersection(b):
-    print(1)
-
-print(intersection)
+for i in []:
+    if i==1:
+        print("It works without list elements")
+exit("It ends without error")

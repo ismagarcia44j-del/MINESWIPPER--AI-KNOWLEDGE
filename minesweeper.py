@@ -207,6 +207,29 @@ class MinesweeperAI():
         #4) mark any additional cells as safe or as mines if it can be concluded
             #    based on the AI's knowledge base
 
+        KB_change=True
+
+        while KB_change==True:
+            KB_change = False
+
+            for sentence in self.knowledge[:]:
+                if sentence:
+                    self.clean_tracked_safes_mines(sentence.cells,sentence)
+                    KB_change=True
+                    break
+                elif sentence.count == len(sentence.cells) and sentence.count>0:
+                    self.entire_mines_sentence(sentence)
+                    KB_change=True
+                    break
+                elif sentence.count == len(sentence.cells) and sentence.count==0:
+                    self.entire_safes_sentence(sentence)
+                    KB_change=True
+                    break
+                
+                KB_change = self.subset_inferences(sentence,self.knowledge)#LOOKING FOR SUBSETS
+                break 
+                
+
     def make_safe_move(self):
         """
         Returns a safe cell to choose on the Minesweeper board.
@@ -277,5 +300,60 @@ class MinesweeperAI():
             around_cells.add((i,j+1))
 
         return around_cells
-    
-    
+
+    def clean_tracked_safes_mines(self,a_cells_group,obj): #Already tested
+        """
+        Mark safe and mines cells based on the tracking lists and
+        remove a sentence in case of the are not more cells.
+        """
+            
+        #Clean safes
+        if safe_intersection := a_cells_group.intersection(self.safes):
+            for cell in safe_intersection:
+                self.mark_safe(cell)
+
+        #Clean mines
+        if mine_intersection:=a_cells_group.intersection(self.mines):
+            for cell in mine_intersection:
+                self.mark_mine(cell)
+
+        #if there are not cells
+            if not a_cells_group: 
+                self.knowledge.remove(obj)
+
+    def entire_mines_sentence(self,sentence_obj):
+        """
+        It looks for a sentence that it is 
+        completely undentified mines made. 
+        Once it mark as mine delete the entire sentence object"""
+        
+        for cell in sentence_obj.cells.copy():#MARK AS MINE EACH ONE
+            self.mark_mine(cell)
+        self.knowledge.remove(sentence_obj) #DELETE THE ENTIRE OBJECT
+
+    def entire_safes_sentence(self,sentence_obj):
+        """
+        It looks for a sentence that it is 
+        completely undentified safes made. 
+        Once it mark as mine delete the entire sentence object"""
+
+        for cell in sentence_obj.cells.copy():#MARK AS SAFE EACH ONE
+            self.mark_safe(cell)
+        self.knowledge.remove(sentence_obj) #DELETE THE ENTIRE OBJECT
+
+    def subset_inferences(self,copy_sentence,self_knowledge):
+        """
+        It looks for a subset, if there is, so make the corresponding
+        inferences between those and immediately after the changes 
+        ends the loop with return.
+        
+        It returns True if it make changes, otherwise False"""
+        for other in self_knowledge[:]: #LOOKING FOR SUBSETS 
+            if copy_sentence.issubset(other):
+                if not other is copy_sentence:
+                    cells_change = other.cells - copy_sentence.cells
+                    count_change = other.count - copy_sentence.count
+                    other.cells = cells_change
+                    other.count = count_change
+                    return True
+        return False
