@@ -67,6 +67,35 @@ def test_clean_tracked_safes_mines():
     assert ai.knowledge[0].cells=={(1,0),(0,1)}
 
     #testing erase the object
-    ai.knowledge = [Sentence({},0)]#,Sentence({(0,1),(1,1),(1,2)},1)]
+    ai.knowledge = [Sentence({},0)]#,]
     ai.clean_tracked_safes_mines(ai.knowledge[0].cells,ai.knowledge[0])
     assert not ai.knowledge[0].cells == True
+
+def test_entire_mines_sentence():
+    ai.knowledge = [Sentence({(1,0),(1,1),(0,1)},3)]
+    ai.entire_mines_sentence(ai.knowledge[0])
+    assert {(1,0),(1,1),(0,1)} == ai.mines
+    assert len(ai.knowledge) == 0
+
+def test_entire_safes_sentence():
+    ai.knowledge = [Sentence({(1,0),(1,1),(0,1)},0)]
+    ai.entire_safes_sentence(ai.knowledge[0])
+    assert {(1,0),(1,1),(0,1)} == ai.safes
+    assert len(ai.knowledge) == 0
+
+def test_subset_inferences():
+    #Testing: Is the greater sentence's cell set a subset of the less sentence's cell set?
+    ai.knowledge = [Sentence({(1,0),(1,1),(0,1)},1),Sentence({(0,1),(1,1)},1)]#,(1,2)},1)]
+    for sentence in ai.knowledge[:]:
+        KB_change = ai.subset_inferences(sentence)
+        break
+    assert KB_change == False
+
+    #Testing: Is the greater sentence' cells set a subset of the less sentence' cells set?
+    ai.knowledge = [Sentence({(0,1),(1,1)},1),Sentence({(1,0),(1,1),(0,1)},1)]#,(1,2)},1)]
+    for sentence in ai.knowledge[:]:
+        KB_change = ai.subset_inferences(sentence)
+        break
+    assert KB_change == True 
+    assert ai.knowledge[0].cells== {(0,1),(1,1)} and ai.knowledge[0].count == 1
+    assert ai.knowledge[1].cells== {(1,0)} and ai.knowledge[1].count == 0

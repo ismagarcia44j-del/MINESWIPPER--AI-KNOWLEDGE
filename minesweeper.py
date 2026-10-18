@@ -226,9 +226,9 @@ class MinesweeperAI():
                     KB_change=True
                     break
                 
-                KB_change = self.subset_inferences(sentence,self.knowledge)#LOOKING FOR SUBSETS
-                break 
-                
+                if KB_change := self.subset_inferences(sentence):#LOOKING FOR SUBSETS
+                    break 
+
 
     def make_safe_move(self):
         """
@@ -341,15 +341,15 @@ class MinesweeperAI():
             self.mark_safe(cell)
         self.knowledge.remove(sentence_obj) #DELETE THE ENTIRE OBJECT
 
-    def subset_inferences(self,copy_sentence,self_knowledge):
+    def subset_inferences(self,copy_sentence):
         """
         It looks for a subset, if there is, so make the corresponding
         inferences between those and immediately after the changes 
         ends the loop with return.
         
         It returns True if it make changes, otherwise False"""
-        for other in self_knowledge[:]: #LOOKING FOR SUBSETS 
-            if copy_sentence.issubset(other):
+        for other in self.knowledge[:]: #LOOKING FOR SUBSETS 
+            if copy_sentence.cells.issubset(other.cells):
                 if not other is copy_sentence:
                     cells_change = other.cells - copy_sentence.cells
                     count_change = other.count - copy_sentence.count
@@ -357,3 +357,5 @@ class MinesweeperAI():
                     other.count = count_change
                     return True
         return False
+
+    
