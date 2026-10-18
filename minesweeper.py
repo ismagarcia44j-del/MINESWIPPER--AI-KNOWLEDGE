@@ -109,7 +109,7 @@ class Sentence():
         """
         Returns the set of all cells in self.cells known to be mines.
         """
-        raise NotImplementedError
+        return self.mines
 
     def known_safes(self):
         """
@@ -123,7 +123,8 @@ class Sentence():
         a cell is known to be a mine.
         """
         #Delete the mine cell
-        self.cells.remove(cell)
+        if self.cells and (cell in self.cells):
+            self.cells.remove(cell)
         #Sustracts one to the count
         self.count -= 1
         self.mines.add(cell)
@@ -133,8 +134,9 @@ class Sentence():
         Updates internal knowledge representation given the fact that
         a cell is known to be safe.
         """
-        #Delete the mine cell
-        self.cells.remove(cell)
+        #Delete the safe cell
+        if self.cells and (cell in self.cells):
+            self.cells.remove(cell)
         self.safes.add(cell)
 
 
@@ -195,15 +197,20 @@ class MinesweeperAI():
 
         #1) mark the cell as a move that has been made
         self.moves_made.add(cell)
+
         #2) mark the cell as safe and updates any sentences that 
-        # contain the cell as well. [ALREADY Developed and tested deeply]
+            # contain the cell as well. [ALREADY Developed and tested deeply]
         self.mark_safe(cell)
             #I NEED TO UPDATE any sentences that contain the cell as well
             #Make inferences and one more time update the knowledgebase
+
         #3) add a new sentence to the AI’s knowledge base to indicate that count of the cell’s neighbors are mines. 
             #Be sure to only include cells whose state is still undetermined in the sentence.
         surr_cells=self.surrounding_cells(cell)
         self.knowledge.append(Sentence(surr_cells,count))
+
+        
+
         #4) mark any additional cells as safe or as mines if it can be concluded
             #    based on the AI's knowledge base
 
@@ -213,9 +220,7 @@ class MinesweeperAI():
             KB_change = False
 
             for sentence in self.knowledge[:]:
-                if sentence:
-                    self.clean_tracked_safes_mines(sentence.cells,sentence)
-                    KB_change=True
+                if KB_change := self.clean_tracked_safes_mines(sentence.cells,sentence):
                     break
                 elif sentence.count == len(sentence.cells) and sentence.count>0:
                     self.entire_mines_sentence(sentence)
@@ -228,7 +233,6 @@ class MinesweeperAI():
                 
                 if KB_change := self.subset_inferences(sentence):#LOOKING FOR SUBSETS
                     break 
-
 
     def make_safe_move(self):
         """
@@ -311,15 +315,16 @@ class MinesweeperAI():
         if safe_intersection := a_cells_group.intersection(self.safes):
             for cell in safe_intersection:
                 self.mark_safe(cell)
-
+            return True
         #Clean mines
-        if mine_intersection:=a_cells_group.intersection(self.mines):
+        elif mine_intersection:=a_cells_group.intersection(self.mines):
             for cell in mine_intersection:
                 self.mark_mine(cell)
-
+            return True
         #if there are not cells
-            if not a_cells_group: 
-                self.knowledge.remove(obj)
+        elif not a_cells_group: 
+            self.knowledge.remove(obj)
+            return True
 
     def entire_mines_sentence(self,sentence_obj):
         """
@@ -358,4 +363,3 @@ class MinesweeperAI():
                     return True
         return False
 
-    

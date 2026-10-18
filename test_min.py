@@ -1,14 +1,17 @@
 import pytest
 from minesweeper import Sentence, MinesweeperAI
 
-the_set={1,2,3,5}
-s=Sentence(the_set,3)
+
 def test_mark_mine():
+    the_set={1,2,3,5}
+    s=Sentence(the_set,3)
     s.mark_mine(2)
     assert s.cells=={1,3,5}
     assert s.count==2
 
 def test_mark_safe_and_known_safes():
+    the_set={1,2,3,5}
+    s=Sentence(the_set,3)
     s.mark_safe(5) #testing mark_safe and...
     assert s.known_safes()=={5} #...mark_safe
 
@@ -39,8 +42,9 @@ def test_surrounding_cells_center():
             (i-1,j),(i-1,j+1),(i-1,j-1),
             (i+1,j),(i+1,j+1),(i+1,j-1)
             }==response
-#HARDCODED (8*8) TEST, THEREFORE NO SCALABLE
+
 def test_surrounding_cells_one_side():
+    #HARDCODED (8*8) TEST, THEREFORE NO SCALABLE
     i=0
     j=1
     #UP SIDE
@@ -55,7 +59,9 @@ def test_surrounding_cells_one_side():
 
 def test_clean_tracked_safes_mines():
     #testing clean safes
-    ai.knowledge = [Sentence({(1,0),(1,1),(0,1)},1)]#,Sentence({(0,1),(1,1),(1,2)},1)]
+    ai=MinesweeperAI()
+    j=Sentence({(1,0),(1,1),(0,1)},1)
+    ai.knowledge = [j]#,Sentence({(0,1),(1,1),(1,2)},1)]
     ai.safes = {(1,1)}
     ai.clean_tracked_safes_mines(ai.knowledge[0].cells,ai.knowledge[0])
     assert ai.knowledge[0].cells=={(1,0),(0,1)}
@@ -69,7 +75,7 @@ def test_clean_tracked_safes_mines():
     #testing erase the object
     ai.knowledge = [Sentence({},0)]#,]
     ai.clean_tracked_safes_mines(ai.knowledge[0].cells,ai.knowledge[0])
-    assert not ai.knowledge[0].cells == True
+    assert not ai.knowledge == True
 
 def test_entire_mines_sentence():
     ai.knowledge = [Sentence({(1,0),(1,1),(0,1)},3)]
@@ -84,14 +90,14 @@ def test_entire_safes_sentence():
     assert len(ai.knowledge) == 0
 
 def test_subset_inferences():
-    #Testing: Is the greater sentence's cell set a subset of the less sentence's cell set?
+    #Testing: Is the greater sentence's.cell set a subset of the lesser sentence's.cell set?
     ai.knowledge = [Sentence({(1,0),(1,1),(0,1)},1),Sentence({(0,1),(1,1)},1)]#,(1,2)},1)]
     for sentence in ai.knowledge[:]:
         KB_change = ai.subset_inferences(sentence)
         break
     assert KB_change == False
 
-    #Testing: Is the greater sentence' cells set a subset of the less sentence' cells set?
+    #Testing: Is the lesser sentence's.cell set a subset of the the greater sentence's.cell set?
     ai.knowledge = [Sentence({(0,1),(1,1)},1),Sentence({(1,0),(1,1),(0,1)},1)]#,(1,2)},1)]
     for sentence in ai.knowledge[:]:
         KB_change = ai.subset_inferences(sentence)
@@ -99,3 +105,21 @@ def test_subset_inferences():
     assert KB_change == True 
     assert ai.knowledge[0].cells== {(0,1),(1,1)} and ai.knowledge[0].count == 1
     assert ai.knowledge[1].cells== {(1,0)} and ai.knowledge[1].count == 0
+
+def test_add_knowledge_fst_movement():
+    ai = MinesweeperAI()
+    #The first movement was (0,1) and it was safe
+    ai.add_knowledge((0,1),1)
+    assert ai.moves_made == {(0,1)} # POINT 1
+    assert ai.safes == {(0,1)} # POINT 2
+    assert ai.safes == {(0,1)}
+    assert ai.knowledge[0].cells == {(0,0),(1,0),(1,1),(1,2),(0,2)}
+    assert ai.knowledge[0].count == 1
+    assert ai.knowledge[0].safes == set()
+
+    #The first movement plus the second movement
+    
+
+
+
+
