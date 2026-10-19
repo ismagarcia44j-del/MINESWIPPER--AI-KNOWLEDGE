@@ -13,7 +13,7 @@ def test_mark_safe_and_known_safes():
     the_set={1,2,3,5}
     s=Sentence(the_set,3)
     s.mark_safe(5) #testing mark_safe and...
-    assert s.known_safes()=={5} #...mark_safe
+    assert s.known_safes() == set() #...mark_safe
 
 ai=MinesweeperAI()
 def test_surrounding_cells_square():

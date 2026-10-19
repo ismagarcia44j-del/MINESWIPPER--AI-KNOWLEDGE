@@ -106,16 +106,14 @@ class Sentence():
         return f"{self.cells} = {self.count}"
 
     def known_mines(self):
-        """
-        Returns the set of all cells in self.cells known to be mines.
-        """
-        return self.mines
+        if self.cells and self.count == len(self.cells):
+            return set(self.cells)
+        return set()
 
     def known_safes(self):
-        """
-        Returns the set of all cells in self.cells known to be safe.
-        """
-        return self.safes
+        if self.count == 0:
+            return set(self.cells)
+        return set()
 
     def mark_mine(self, cell):
         """
@@ -123,10 +121,10 @@ class Sentence():
         a cell is known to be a mine.
         """
         #Delete the mine cell
-        if self.cells and (cell in self.cells):
+        if cell in self.cells:
             self.cells.remove(cell)
-        #Sustracts one to the count
-        self.count -= 1
+            self.count -= 1
+            #Sustracts one to the count
         self.mines.add(cell)
 
     def mark_safe(self, cell):
@@ -135,7 +133,7 @@ class Sentence():
         a cell is known to be safe.
         """
         #Delete the safe cell
-        if self.cells and (cell in self.cells):
+        if cell in self.cells:
             self.cells.remove(cell)
         self.safes.add(cell)
 
@@ -227,7 +225,7 @@ class MinesweeperAI():
                     self.entire_mines_sentence(sentence)
                     KB_change=True
                     break
-                elif sentence.cells and sentence.count==0:
+                elif sentence.cells and (sentence.count==0):
                     self.entire_safes_sentence(sentence)
                     KB_change=True
                     break
@@ -245,12 +243,11 @@ class MinesweeperAI():
         """
         """1 Sustract  mines from self.moves_made.
            2 Sustract  intersection of (self.moves_made from self.safes) from self.safes"""
-        if self.knowledge:
+        if len(self.safes) > len (self.moves_made):
             inferenced_safes = list( self.safes - self.moves_made.intersection(self.safes) )
             return random.choice(inferenced_safes)
         else:
             return None
-
 
     def make_random_move(self):
         """
@@ -379,5 +376,4 @@ class MinesweeperAI():
         for i in range(self.height):
             for j in range(self.width):
                 the_grid.add((i,j))
-
         return the_grid
