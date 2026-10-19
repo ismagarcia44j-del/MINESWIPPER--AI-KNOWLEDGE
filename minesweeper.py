@@ -226,13 +226,13 @@ class MinesweeperAI():
                     self.entire_mines_sentence(sentence)
                     KB_change=True
                     break
-                elif sentence.count == len(sentence.cells) and sentence.count==0:
+                elif sentence.cells and sentence.count==0:
                     self.entire_safes_sentence(sentence)
                     KB_change=True
                     break
-                
-                if KB_change := self.subset_inferences(sentence):#LOOKING FOR SUBSETS
-                    break 
+                elif KB_change := self.subset_inferences(sentence):#LOOKING FOR SUBSETS
+                    break
+
 
     def make_safe_move(self):
         """
@@ -310,19 +310,18 @@ class MinesweeperAI():
         Mark safe and mines cells based on the tracking lists and
         remove a sentence in case of the are not more cells.
         """
-            
-        #Clean safes
-        if safe_intersection := a_cells_group.intersection(self.safes):
-            for cell in safe_intersection:
-                self.mark_safe(cell)
-            return True
-        #Clean mines
-        elif mine_intersection:=a_cells_group.intersection(self.mines):
-            for cell in mine_intersection:
-                self.mark_mine(cell)
-            return True
-        #if there are not cells
-        elif not a_cells_group: 
+        if a_cells_group:   
+            #Clean safes
+            if safe_intersection := a_cells_group.intersection(self.safes):
+                for cell in safe_intersection:
+                    self.mark_safe(cell)
+                return True
+            #Clean mines
+            elif mine_intersection:=a_cells_group.intersection(self.mines):
+                for cell in mine_intersection:
+                    self.mark_mine(cell)
+                return True
+        else:
             self.knowledge.remove(obj)
             return True
 

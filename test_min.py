@@ -106,20 +106,75 @@ def test_subset_inferences():
     assert ai.knowledge[0].cells== {(0,1),(1,1)} and ai.knowledge[0].count == 1
     assert ai.knowledge[1].cells== {(1,0)} and ai.knowledge[1].count == 0
 
-def test_add_knowledge_fst_movement():
+def test_add_knowledge_inferences_large_play():
+    #MINE AT 1,1
     ai = MinesweeperAI()
     #The first movement was (0,1) and it was safe
     ai.add_knowledge((0,1),1)
     assert ai.moves_made == {(0,1)} # POINT 1
     assert ai.safes == {(0,1)} # POINT 2
-    assert ai.safes == {(0,1)}
     assert ai.knowledge[0].cells == {(0,0),(1,0),(1,1),(1,2),(0,2)}
     assert ai.knowledge[0].count == 1
     assert ai.knowledge[0].safes == set()
 
     #The first movement plus the second movement
+    ai.add_knowledge((0,2),1)
+    assert ai.moves_made == {(0,1),(0,2)}
+    assert ai.safes == {(0,1),(0,2)}
+    assert ai.knowledge[0].cells == {(0,0),(1,0),(1,1),(1,2)}
+    assert ai.knowledge[0].count == 1
+    assert ai.knowledge[1].cells == {(1,1),(1,2),(0,3),(1,3),(0,3)}
+    assert ai.knowledge[1].count == 1
     
+   #The first and second movement plus the third movement
+    ai.add_knowledge((2,1),1)
+    assert ai.moves_made == {(0,1),(0,2),(2,1)}
+    assert ai.safes == {(0,1),(0,2),(2,1)}
+    assert ai.knowledge[0].cells == {(0,0),(1,0),(1,1),(1,2)}
+    assert ai.knowledge[0].count == 1
+    assert ai.knowledge[1].cells == {(1,1),(1,2),(0,3),(1,3),(0,3)}
+    assert ai.knowledge[1].count == 1
+    assert ai.knowledge[2].cells == {(1,0),(1,1),(1,2),(2,0),(3,0),(3,1),(3,2),(2,2)}
+    assert ai.knowledge[2].count == 1
 
+    #The first, second, third movement plus the fourth movement
+    ai.add_knowledge((2,0),1)
+    assert ai.moves_made == {(0,1),(0,2),(2,1),(2,0)}
+    assert ai.safes == {(0,1),(0,2),(2,1),(2,0),(1,2),(3,2),(2,2)}
+    assert ai.knowledge[0].cells == {(0,0),(1,0),(1,1)}
+    assert ai.knowledge[0].count == 1
+    assert ai.knowledge[1].cells == {(1,1),(1,3),(0,3)}
+    assert ai.knowledge[1].count == 1
+    assert ai.knowledge[2].cells == {(1,0),(1,1),(3,1),(3,0)} #d
+    assert ai.knowledge[2].count == 1
 
+    #The first, second, third,fourth movement plus the fifth movement
+    #It doesn't create a sentence already exists
+    ai.add_knowledge((1,0),1)
+    assert ai.moves_made == {(0,1),(0,2),(2,1),(2,0),(1,0)}
+    assert ai.safes == {(0,1),(0,2),(2,1),(2,0),(1,2),(3,2),(2,2),(1,0)}
+    assert ai.knowledge[0].cells == {(0,0),(1,1)} 
+    assert ai.knowledge[0].count == 1
+    assert ai.knowledge[1].cells == {(1,1),(1,3),(0,3)}
+    assert ai.knowledge[1].count == 1
+    assert ai.knowledge[2].cells == {(1,1),(3,1),(3,0)}
+    assert ai.knowledge[2].count == 1
 
+def test_add_knowledge_fast_play():
+    #MINE AT 1,0
+    ai = MinesweeperAI()
 
+    #The first movement was (1,2) and it is thoroughly safe
+    ai.add_knowledge((1,2),0)
+    assert ai.moves_made == {(1,2)}
+    assert ai.safes == {(1,2),(0,1),(0,2),(0,3),(1,1),(2,1),(2,2),(2,3),(1,3)}
+    assert len(ai.knowledge) == 0
+
+    #The second movement is (0,0) and it was safe
+    ai.add_knowledge((0,0),1)
+    assert ai.moves_made == {(1,2),(0,0)}
+    assert ai.safes == {(1,2),(0,1),(0,2),(0,3),(1,1),(2,1),(2,2),(2,3),(1,3),(0,0)}
+    assert ai.mines == {(1,0)}
+    assert len(ai.knowledge) == 0
+
+    
