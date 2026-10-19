@@ -212,7 +212,8 @@ class MinesweeperAI():
         
 
         #4) mark any additional cells as safe or as mines if it can be concluded
-            #    based on the AI's knowledge base
+            #    based on the AI's knowledge base and #5 add any new sentences to the AI's knowledge base
+               #    if they can be inferred from existing knowledge
 
         KB_change=True
 
@@ -233,7 +234,6 @@ class MinesweeperAI():
                 elif KB_change := self.subset_inferences(sentence):#LOOKING FOR SUBSETS
                     break
 
-
     def make_safe_move(self):
         """
         Returns a safe cell to choose on the Minesweeper board.
@@ -243,7 +243,14 @@ class MinesweeperAI():
         This function may use the knowledge in self.mines, self.safes
         and self.moves_made, but should not modify any of those values.
         """
-        raise NotImplementedError
+        """1 Sustract  mines from self.moves_made.
+           2 Sustract  intersection of (self.moves_made from self.safes) from self.safes"""
+        if self.knowledge:
+            inferenced_safes = list( self.safes - self.moves_made.intersection(self.safes) )
+            return random.choice(inferenced_safes)
+        else:
+            return None
+
 
     def make_random_move(self):
         """
@@ -252,8 +259,13 @@ class MinesweeperAI():
             1) have not already been chosen, and
             2) are not known to be mines
         """
-        raise NotImplementedError
 
+        the_grid = self.yields_grid()
+
+        not_selected = the_grid - self.moves_made
+        availability = list(not_selected - self.mines)
+        return random.choice(availability)
+        
     def surrounding_cells(self,cell):
         """
         Returns the surrounding cells (set of tuples) of 
@@ -362,3 +374,10 @@ class MinesweeperAI():
                     return True
         return False
 
+    def yields_grid(self):
+        the_grid = set()
+        for i in range(self.height):
+            for j in range(self.width):
+                the_grid.add((i,j))
+
+        return the_grid

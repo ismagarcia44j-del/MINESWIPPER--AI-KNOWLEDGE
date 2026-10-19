@@ -177,4 +177,44 @@ def test_add_knowledge_fast_play():
     assert ai.mines == {(1,0)}
     assert len(ai.knowledge) == 0
 
+def test_make_safe_move():
+    ai = MinesweeperAI()
     
+    #The first movement was (1,2) and it is thoroughly safe
+    ai.add_knowledge((1,2),0)
+    assert ai.moves_made == {(1,2)}
+    assert ai.safes == {(1,2),(0,1),(0,2),(0,3),(1,1),(2,1),(2,2),(2,3),(1,3)}
+    assert len(ai.knowledge) == 0
+
+    #The second movement is (0,0) and it was safe
+    ai.add_knowledge((0,0),1)
+    assert ai.moves_made == {(1,2),(0,0)}
+    assert ai.safes == {(1,2),(0,1),(0,2),(0,3),(1,1),(2,1),(2,2),(2,3),(1,3),(0,0)}
+    assert ai.mines == {(1,0)}
+    assert len(ai.knowledge) == 0
+
+    #TESTING MAKE_SAFE_MOVE
+    assert ai.make_safe_move() in {(0,1),(0,2),(0,3),(1,1),(2,1),(2,2),(2,3),(1,3)}
+    assert ai.make_safe_move() != {(1,0)}
+    assert len(ai.make_safe_move()) == 2
+
+def test_make_random_move():
+    ai = MinesweeperAI()
+    
+    #The first movement was (1,2) and it is thoroughly safe
+    ai.add_knowledge((1,2),0)
+    assert ai.moves_made == {(1,2)}
+    assert ai.safes == {(1,2),(0,1),(0,2),(0,3),(1,1),(2,1),(2,2),(2,3),(1,3)}
+    assert len(ai.knowledge) == 0
+
+    #The second movement is (0,0) and it was safe
+    ai.add_knowledge((0,0),1)
+    assert ai.moves_made == {(1,2),(0,0)}
+    assert ai.safes == {(1,2),(0,1),(0,2),(0,3),(1,1),(2,1),(2,2),(2,3),(1,3),(0,0)}
+    assert ai.mines == {(1,0)}
+    assert len(ai.knowledge) == 0
+
+    #TESTING MAKE_RANDOM_MOVE
+    assert ai.make_random_move() not in ai.moves_made
+    assert ai.make_random_move() != {(1,0)}
+    assert len(ai.make_random_move()) == 2
